@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Investing Api</title>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <script src="popup.js"></script>
+</head>
+<body style="--bs-body-font-size: 13px; --bs-body-color:#333;--bs-emphasis-color:#333;width: 600px; height: 640px">
+<div class="container-fluid p-2 g-2">
+    <div class="card mb-2">
+        <div class="card-header p-2 fw-bold"><i class="fa-solid fa-coins"></i> Symbols</div>
+        <div class="card-body p-2">
+            <form action="#">
+                <div class="table-responsive">
+                    <table id="symbol-table" class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <button type="button" id="symbol-new-btn" class="btn btn-primary btn-sm float-start">
+                        <i class="fa-solid fa-plus"></i> New
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-2">
+        <div class="card-header p-2 fw-bold"><i class="fa-solid fa-gear"></i> Settings</div>
+        <div class="card-body p-2">
+            <div class="table-responsive">
+                <table id="options-table" class="table table-sm mb-1">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="align-middle">Api Url</th>
+                        <td>
+                            <input type="text" name="api_url" class="form-control form-control-sm" required
+                                   placeholder="Api url for requests"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle">Sleep</th>
+                        <td>
+                            <input type="number" name="sleep_seconds" class="form-control form-control-sm" min="0"
+                                   step="1" required placeholder="Sleep seconds for symbols"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle">Start Date</th>
+                        <td>
+                            <input type="date" name="date_min" class="form-control form-control-sm" required
+                                   placeholder="Start date for historical items"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle">End Date</th>
+                        <td>
+                            <input type="date" name="date_max" class="form-control form-control-sm" required
+                                   placeholder="End date for historical items"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-2">
+        <div class="card-header p-2 fw-bold"><i class="fa-solid fa-person-running"></i> Actions</div>
+        <div class="card-body p-2">
+            <button type="button" id="run-btn" class="btn btn-success btn-sm float-start">
+                <i class="fa-solid fa-person-running"></i> Run
+            </button>
+            <button type="button" id="save-btn" class="btn btn-success btn-sm float-end">
+                <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header p-2 fw-bold"><i class="fa-solid fa-road"></i> Logs</div>
+        <div class="card-body p-2">
+           <textarea id="log-textarea" class="form-control form-control-sm" style="height: 80px; font-size: 12px"></textarea>
+        </div>
+    </div>
+</div>
+</body>
+</html>
