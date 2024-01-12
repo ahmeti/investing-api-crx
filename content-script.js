@@ -47,9 +47,9 @@ const App = {
         });
     },
 
-    post: (options, body) => {
+    post: (symbolName, options, body) => {
         return new Promise((resolve, reject) => {
-            fetch(options.api_url,
+            fetch(options.api_url + '?' + 'symbol_name=' + symbolName,
                 {
                     method: 'POST',
                     headers: {
@@ -86,10 +86,10 @@ const App = {
                     };
                     App.request(params).then((dataInvesting) => {
                         chrome.runtime.sendMessage({ from: 'content', message: 'Investing Success: ' + request.action + ' -> ' + symbol.name });
-                        App.post(options, dataInvesting).then((dataApi) => {
+                        App.post(symbol.name, options, dataInvesting).then((dataApi) => {
                             chrome.runtime.sendMessage({ from: 'content', message: 'Api Success: ' + request.action + ' -> ' + symbol.name });
                         }, (errorApi) => {
-                            chrome.runtime.sendMessage({ from: 'content', message: 'Api Error: ' + request.action + ' -> ' + symbol.name + ' -> ' + errorApi});
+                            chrome.runtime.sendMessage({ from: 'content', message: 'Api Error: ' + request.action + ' -> ' + symbol.name + ' -> ' + errorApi });
                         });
                     }, (errorInvesting) => {
                         chrome.runtime.sendMessage(
