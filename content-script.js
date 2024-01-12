@@ -1,4 +1,4 @@
-// noinspection JSUnresolvedReference
+// noinspection JSUnresolvedReference,JSUnusedLocalSymbols
 
 const App = {
 
@@ -11,9 +11,9 @@ const App = {
         return data.props.pageProps.accessToken;
     },
 
-    request: async (params) => {
-        return new Promise(async (resolve, reject) => {
-            const response = await fetch(
+    request: (params) => {
+        return new Promise((resolve, reject) => {
+            fetch(
                 'https://api.investing.com/api/financialdata/historical/' + params.symbol_id +
                 '?start-date=' + params.date_min + '&end-date=' + params.date_max +
                 '&time-frame=Daily&add-missing-rows=false',
@@ -38,9 +38,31 @@ const App = {
                     'method': 'GET',
                     'mode': 'cors',
                     'credentials': 'include',
-                });
+                }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return response.text().then(text => {throw new Error(text);});
+            }).then(data => resolve(data)).catch(error => reject(error));
+        });
+    },
 
-            resolve(await response.json());
+    post: (options, body) => {
+        return new Promise((resolve, reject) => {
+            fetch(options.api_url,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return response.text().then(text => {throw new Error(text);});
+            }).then(data => resolve(data)).catch(error => reject(error));
         });
     },
 
@@ -56,15 +78,22 @@ const App = {
             const options = result.options;
             symbols.forEach((symbol, index) => {
                 setTimeout(() => {
-                    chrome.runtime.sendMessage({ from: 'content', message: 'Preparing: ' + request.action + ' -> ' + symbol.name });
+                    chrome.runtime.sendMessage({ from: 'content', message: 'Investing Preparing: ' + request.action + ' -> ' + symbol.name });
                     const params = {
                         symbol_id: symbol.id,
                         date_min: options.date_min,
                         date_max: options.date_max,
                     };
-                    App.request(params).then((data) => {
-                        console.log(data);
-                        chrome.runtime.sendMessage({ from: 'content', message: 'Result: ' + request.action + ' -> ' + symbol.name });
+                    App.request(params).then((dataInvesting) => {
+                        chrome.runtime.sendMessage({ from: 'content', message: 'Investing Success: ' + request.action + ' -> ' + symbol.name });
+                        App.post(options, dataInvesting).then((dataApi) => {
+                            chrome.runtime.sendMessage({ from: 'content', message: 'Api Success: ' + request.action + ' -> ' + symbol.name });
+                        }, (errorApi) => {
+                            chrome.runtime.sendMessage({ from: 'content', message: 'Api Error: ' + request.action + ' -> ' + symbol.name + ' -> ' + errorApi});
+                        });
+                    }, (errorInvesting) => {
+                        chrome.runtime.sendMessage(
+                            { from: 'content', message: 'Investing Error: ' + request.action + ' -> ' + symbol.name + ' -> ' + errorInvesting });
                     });
                 }, index * options.sleep_seconds);
             });
